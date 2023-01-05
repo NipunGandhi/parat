@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:parat/controller.dart';
 
 import 'custom_dates.dart';
 import 'logic.dart';
@@ -23,6 +25,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
     selectedValueMonths = months[month - 1];
     setState(() {});
   }
+
+  Controller controller = Get.find();
 
   @override
   initState() {
@@ -218,8 +222,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    defaultText = "${CustomDates.dateSelected}/$month/$year";
-                    print("${CustomDates.dateSelected}/$month/$year");
+                    defaultText =
+                        "${CustomDates.dateSelected.toString().length == 2 ? CustomDates.dateSelected : "0${CustomDates.dateSelected}"}/${month.toString().length == 2 ? month : "0$month"}/$year";
+                    controller.date.value = defaultText;
                     setState(() {});
                     Navigator.pop(context, 'Ok');
                   },

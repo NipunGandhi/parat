@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:parat/controller.dart';
 import 'package:parat/custom_calendar.dart';
-import 'package:parat/logic.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-
+  HomePage({Key? key}) : super(key: key);
+  Controller controller = Get.put(Controller());
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,36 +23,38 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => const AlertDialog(
-                    actions: <Widget>[
-                      CustomCalendar(),
-                    ],
+            Container(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              margin: const EdgeInsets.only(left: 25, right: 25, bottom: 15),
+              decoration: BoxDecoration(
+                color: const Color(0xffF2F2F2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              height: 50,
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Obx(
+                    () => Text(controller.date.toString()),
                   ),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.only(left: 15, right: 15),
-                margin: const EdgeInsets.only(left: 25, right: 25, bottom: 15),
-                decoration: BoxDecoration(
-                  color: const Color(0xffF2F2F2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                height: 50,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(defaultText),
-                    Image(
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => const AlertDialog(
+                          actions: <Widget>[
+                            CustomCalendar(),
+                          ],
+                        ),
+                      );
+                    },
+                    child: const Image(
                       image: AssetImage("assets/images/img.png"),
                       height: 30,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
