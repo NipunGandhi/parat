@@ -231,6 +231,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                         "${controller.dd.toString().length == 2 ? controller.dd : "0${controller.dd}"}/${month.toString().length == 2 ? month : "0$month"}/$year";
                     print(defaultText);
                     controller.date.value = defaultText;
+                    controller.textController.text = defaultText;
                     setState(() {});
                     Navigator.pop(context, 'Ok');
                   },

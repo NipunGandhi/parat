@@ -1,18 +1,26 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:parat/controller.dart';
 import 'package:parat/custom_calendar.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   Controller controller = Get.put(Controller());
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController textController = TextEditingController();
     int dd;
     int mm;
+    int valueSize = 0;
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -45,61 +53,62 @@ class HomePage extends StatelessWidget {
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(10),
                       ],
-                      controller: textController,
+                      controller: controller.textController,
                       decoration: const InputDecoration(
                         hintText: "dd/mm/yyyy",
                         border: InputBorder.none,
                       ),
                       keyboardType: TextInputType.number,
                       onChanged: (String value) {
-                        print("dd - ${controller.dd}");
-
-                        print("mm - ${controller.mm}");
-
-                        print("YYYY- ${controller.yyyy}");
-                        if (value.length == 2) {
-                          dd = int.parse(value);
-                          if (dd > 31) {
-                            textController.clear();
-                          } else {
-                            value += "/";
-                            textController.value =
-                                textController.value.copyWith(
-                              text: value,
-                              selection:
-                                  TextSelection.collapsed(offset: value.length),
-                            );
+                        if (value.length < valueSize) {
+                          print("Backspace");
+                          valueSize = value.length;
+                        } else {
+                          valueSize = value.length;
+                          if (value.length == 2) {
+                            dd = int.parse(value);
+                            if (dd > 31) {
+                              controller.textController.clear();
+                            } else {
+                              value += "/";
+                              controller.textController.value =
+                                  controller.textController.value.copyWith(
+                                text: value,
+                                selection: TextSelection.collapsed(
+                                  offset: value.length,
+                                ),
+                              );
+                            }
                           }
-                        }
-                        if (value.length == 5) {
-                          mm = int.parse(value.substring(3, 5));
-                          if (mm > 12) {
-                            textController.clear();
-                          } else {
-                            value += "/";
-                            textController.value =
-                                textController.value.copyWith(
-                              text: value,
-                              selection: TextSelection.collapsed(
-                                offset: value.length,
-                              ),
-                            );
+                          if (value.length == 5) {
+                            mm = int.parse(value.substring(3, 5));
+                            if (mm > 12) {
+                              controller.textController.clear();
+                            } else {
+                              value += "/";
+                              controller.textController.value =
+                                  controller.textController.value.copyWith(
+                                text: value,
+                                selection: TextSelection.collapsed(
+                                  offset: value.length,
+                                ),
+                              );
+                            }
                           }
-                        }
-                        if (value.length == 10) {
-                          controller.dd = int.parse(value.substring(0, 2));
-                          print("dd - ${controller.dd}");
-                          controller.mm = int.parse(value.substring(3, 5));
-                          print("mm - ${controller.mm}");
-                          controller.yyyy = int.parse(value.substring(6, 10));
-                          print("YYYY- ${controller.yyyy}");
+                          if (value.length == 10) {
+                            controller.dd = int.parse(value.substring(0, 2));
+                            controller.mm = int.parse(value.substring(3, 5));
+                            controller.yyyy = int.parse(value.substring(6, 10));
+                            var defaultText =
+                                "${controller.dd.toString().length == 2 ? controller.dd : "0${controller.dd}"}/${controller.mm.toString().length == 2 ? controller.mm : "0${controller.mm}"}/${controller.yyyy}";
+                            print(defaultText);
+                            controller.date.value = defaultText;
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          }
                         }
                       },
                     ),
                   ),
-                  // Obx(
-                  //   () => Text(controller.date.toString()),
-                  // ),
                   GestureDetector(
                     onTap: () {
                       showDialog(
@@ -111,9 +120,13 @@ class HomePage extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Image(
-                      image: AssetImage("assets/images/img.png"),
-                      height: 30,
+                    child: Obx(
+                      () => Image(
+                        image: controller.date == "dd/mm/yy"
+                            ? const AssetImage("assets/images/img.png")
+                            : const AssetImage("assets/images/img_1.png"),
+                        height: 30,
+                      ),
                     ),
                   ),
                 ],

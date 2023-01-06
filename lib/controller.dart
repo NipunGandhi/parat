@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Controller extends GetxController {
@@ -5,4 +6,5 @@ class Controller extends GetxController {
   int dd = 06;
   int mm = 01;
   int yyyy = 2022;
+  TextEditingController textController = TextEditingController();
 }
