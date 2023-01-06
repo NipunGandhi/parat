@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:parat/controller.dart';
 import 'package:parat/custom_calendar.dart';
@@ -6,8 +7,12 @@ import 'package:parat/custom_calendar.dart';
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
   Controller controller = Get.put(Controller());
+
   @override
   Widget build(BuildContext context) {
+    TextEditingController textController = TextEditingController();
+    int dd;
+    int mm;
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -17,7 +22,7 @@ class HomePage extends StatelessWidget {
               height: 20,
               width: double.infinity,
               child: const Text(
-                "Select a date",
+                "Select date",
                 style: TextStyle(
                   color: Color(0xff686868),
                 ),
@@ -35,9 +40,66 @@ class HomePage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Obx(
-                    () => Text(controller.date.toString()),
+                  Expanded(
+                    child: TextField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                      controller: textController,
+                      decoration: const InputDecoration(
+                        hintText: "dd/mm/yyyy",
+                        border: InputBorder.none,
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (String value) {
+                        print("dd - ${controller.dd}");
+
+                        print("mm - ${controller.mm}");
+
+                        print("YYYY- ${controller.yyyy}");
+                        if (value.length == 2) {
+                          dd = int.parse(value);
+                          if (dd > 31) {
+                            textController.clear();
+                          } else {
+                            value += "/";
+                            textController.value =
+                                textController.value.copyWith(
+                              text: value,
+                              selection:
+                                  TextSelection.collapsed(offset: value.length),
+                            );
+                          }
+                        }
+                        if (value.length == 5) {
+                          mm = int.parse(value.substring(3, 5));
+                          if (mm > 12) {
+                            textController.clear();
+                          } else {
+                            value += "/";
+                            textController.value =
+                                textController.value.copyWith(
+                              text: value,
+                              selection: TextSelection.collapsed(
+                                offset: value.length,
+                              ),
+                            );
+                          }
+                        }
+                        if (value.length == 10) {
+                          controller.dd = int.parse(value.substring(0, 2));
+                          print("dd - ${controller.dd}");
+                          controller.mm = int.parse(value.substring(3, 5));
+                          print("mm - ${controller.mm}");
+                          controller.yyyy = int.parse(value.substring(6, 10));
+                          print("YYYY- ${controller.yyyy}");
+                        }
+                      },
+                    ),
                   ),
+                  // Obx(
+                  //   () => Text(controller.date.toString()),
+                  // ),
                   GestureDetector(
                     onTap: () {
                       showDialog(

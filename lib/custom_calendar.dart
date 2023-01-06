@@ -20,6 +20,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
   List<String> days = ["S", "M", "T", "W", "T", "F", "S"];
   int month = 1;
   int year = 2023;
+
   Future<void> refresh() async {
     a = await calendar(year, month);
     selectedValueMonths = months[month - 1];
@@ -30,6 +31,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   @override
   initState() {
+    month = controller.mm;
+    year = controller.yyyy;
     refresh();
     super.initState();
   }
@@ -189,7 +192,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                   }
                   return GestureDetector(
                     onTap: () {
-                      CustomDates.dateSelected = a[index];
+                      controller.dd = a[index];
                       setState(() {});
                     },
                     child: CustomDates(
@@ -222,8 +225,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    controller.mm = month;
+                    controller.yyyy = year;
                     defaultText =
-                        "${CustomDates.dateSelected.toString().length == 2 ? CustomDates.dateSelected : "0${CustomDates.dateSelected}"}/${month.toString().length == 2 ? month : "0$month"}/$year";
+                        "${controller.dd.toString().length == 2 ? controller.dd : "0${controller.dd}"}/${month.toString().length == 2 ? month : "0$month"}/$year";
+                    print(defaultText);
                     controller.date.value = defaultText;
                     setState(() {});
                     Navigator.pop(context, 'Ok');
